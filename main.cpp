@@ -192,6 +192,8 @@ GLuint textureLoc,samplerLoc;
  
 // vert array obj Id
 GLuint vert[3];
+
+char currentKey = 'a';
  
 // storage for matrices
 float projMatrix[16];
@@ -293,27 +295,27 @@ void renderScene(void) {
     glutSetWindowTitle(s);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(programs['a']);
+    glUseProgram(programs[currentKey]);
 
 	// Vertex
 	glm::mat4 projectionMat = glm::perspective(glm::radians(53.0f), 640.0f/480, 1.0f, 30.f);
 	glm::mat4 viewMat = glm::lookAt(camaraPos, eyePosition, glm::vec3(0, 1, 0));
-	setUniformMat4(programs['a'], "projMatrix", projectionMat);
-	setUniformMat4(programs['a'], "viewMatrix", viewMat);
+	setUniformMat4(programs[currentKey], "projMatrix", projectionMat);
+	setUniformMat4(programs[currentKey], "viewMatrix", viewMat);
 	const float* viewPtr = glm::value_ptr(viewMat);
 	glm::mat3 normMat = glm::mat3();
 	normMat[0] = glm::vec3(viewMat[0]);
 	normMat[1] = glm::vec3(viewMat[1]);
 	normMat[2] = glm::vec3(viewMat[2]);
-	setUniformMat3(programs['a'], "normalMatrix", normMat);
+	setUniformMat3(programs[currentKey], "normalMatrix", normMat);
 
 	// Fragment
-	setUniformVec3(programs['a'], "Ambient", ambientColor);
-	setUniformVec3(programs['a'], "LightColor", lightColor);
-	setUniformVec3(programs['a'], "LightPosition", lightPosition);
-	setUniformVec3(programs['a'], "CamaraPos", camaraPos);
-	setUniformFloat(programs['a'], "Shininess", shininess);
-	setUniformFloat(programs['a'], "Strength", strength);
+	setUniformVec3(programs[currentKey], "Ambient", ambientColor);
+	setUniformVec3(programs[currentKey], "LightColor", lightColor);
+	setUniformVec3(programs[currentKey], "LightPosition", lightPosition);
+	setUniformVec3(programs[currentKey], "CamaraPos", camaraPos);
+	setUniformFloat(programs[currentKey], "Shininess", shininess);
+	setUniformFloat(programs[currentKey], "Strength", strength);
 
     //glBindVertexArray(vert[0]);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
@@ -470,6 +472,16 @@ void mouseButton(int button, int state, int x, int y)
 
 void keyboardAction(unsigned char key, int x, int y)
 {
+	switch (key){
+		case 'a':
+		case 'p':
+		case 'g':
+		case 'A':
+		case 'P':
+		case 'G':
+			currentKey = key;
+		break;
+	}
 	printf("Keyboard press %c \n", key);
 }
 
@@ -515,6 +527,9 @@ int main(int argc, char **argv)
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	init();
 	programs['a'] = initShaders("vertexA.txt", "fragA.txt");
+	programs['p'] = initShaders("vertexP.txt", "fragP.txt");
+	programs['A'] = programs['a'];
+	programs['P'] = programs['p'];
     setupBuffers(); 
     glutMainLoop();
 
