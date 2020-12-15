@@ -259,6 +259,16 @@ void setIdentMatrix( float *mat, int size)
 {
 	// input: size: size of the matrix (for example size=4 means 4 by 4 matrix)
 	// output: mat: Identity matrix
+	for(int i = 0 ; i < size * size ; i++)
+	{
+		mat[i] = 0.0f;
+	}
+
+	for(int i = 0 ; i < size ; i++)
+	{
+		mat[i*size + i] = 1.0f;
+	}
+
 }
  
 // View Matrix
@@ -349,7 +359,18 @@ void setTransMatrix(float *mat, float x, float y, float z) {
 	//          y: translation in y direction
 	//          z: translation in z direction
 	// output:  mat : translation matrix 
-    
+	// 0 0 0 x
+	// 0 0 0 y
+	// 0 0 0 z
+	// 0 0 0 1
+	for(int i = 0 ; i < 16 ; i++)
+	{
+		mat[i] = 0.0f;
+	}
+	mat[3] =  x;
+	mat[7] =  y;
+	mat[11] = z;
+	mat[15] = 1.0f;
 }
 
 //Transformation matrix mat with a scaling
@@ -359,6 +380,19 @@ void setScale(float *mat, float xScale, float yScale, float zScale)
 	//          yScale: scale in y direction
 	//          zScale: scale in z direction
 	// output:  mat : Scale matrix
+	// x 0 0 0
+	// 0 y 0 0
+	// 0 0 z 0
+	// 0 0 0 1
+	for(int i = 0 ; i < 16 ; i++)
+	{
+		mat[i] = 0.0f;
+	}
+
+	mat[0] = xScale;
+	mat[5] = yScale;
+	mat[10] = zScale;
+	mat[15] = 1.0f;
 }
 
 void changeSize(int w, int h) {
@@ -432,8 +466,8 @@ void renderScene(void) {
     glutSetWindowTitle(s);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
  
-    //placeCam(10,2,10,0,2,-5);
-	placeCam(viewPosition[0],viewPosition[1],viewPosition[2],0,0,-5);
+    placeCam(10,2,10,0,2,-5);
+	// placeCam(viewPosition[0],viewPosition[1],viewPosition[2],0,0,-5);
 	multiplyMatrix(viewMatrix, rotationMatrix(0.0,1.0,0.0, angle));
 	multiplyMatrix(viewMatrix, rotationMatrix(1.0,0.0,0.0, angle2));
     glUseProgram(p);
@@ -645,7 +679,8 @@ int main(int argc, char **argv)
     }
     glEnable(GL_DEPTH_TEST);
 
-    glClearColor(1.0,1.0,1.0,1.0);
+	// black background
+    glClearColor(0.0,0.0,0.0,1.0);
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	init();
     p = initShaders(); 

@@ -24,7 +24,7 @@ void main()
 
 	// You need to multiply the model view (viewMatrix) and projection (projMatrix) matrices with the position in correct order
 	// After this step you should be able too see a blue cube in the middle of the window
-    gl_Position = position ;  
+    gl_Position = projMatrix * viewMatrix *  position ;  
 }
 
 

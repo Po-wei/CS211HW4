@@ -3,7 +3,7 @@ C:\Users\powei\Downloads\PA4\PA4\PA4\PA4\mymath.h(14,8): warning C4996: 'fopen':
 C:\Users\powei\Downloads\PA4\PA4\PA4\PA4\mymath.h(39,8): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Users\powei\Downloads\PA4\PA4\PA4\PA4\main.cpp(427,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   Generating code
-  3 of 30 functions (10.0%) were compiled, the rest were copied from previous compilation.
+  1 of 30 functions ( 3.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
