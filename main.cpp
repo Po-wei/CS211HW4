@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "glm\glm.hpp"
-#include "glm\gtc\type_ptr.hpp"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glew\include\GL\glew.h"
-#include "glut\glut.h"
+#include <GL/glew.h>
+#include <GL/glut.h>
 #include <memory.h>
 #include <math.h>
+
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+
 #include "mymath.h"
  
 #define PI       3.14159265358979323846
@@ -172,8 +175,8 @@ float colors1[] = { 0.0f, 0.0f, 1.0f, 0.3f,
 
  
 // shader names
-char *vertexFileName = "vertex.txt";
-char *fragmentFileName = "frag.txt";
+const char *vertexFileName = "vertex.txt";
+const char *fragmentFileName = "frag.txt";
  
 // program and shader Id
 GLuint p,v,f;

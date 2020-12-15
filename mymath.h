@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *getTxtFile(char *fn) 
+char *getTxtFile(const char *fn) 
 {
 	FILE *fp;
 	char *data = NULL;
@@ -30,7 +30,7 @@ char *getTxtFile(char *fn)
 	return data;
 }
 
-int writeTxtFile(char *fn, char *s) 
+int writeTxtFile(const char *fn, char *s) 
 {
 	FILE *fp;
 	int res = 0;
