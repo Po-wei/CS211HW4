@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <memory.h>
+#include <string>
 #include <math.h>
 
 #include "glm/glm.hpp"
@@ -207,7 +209,7 @@ float Strength = 10.0;
 float EyeDirection[] = {0 , 0 , -5};
 
 
-int frame=0,time,timebase=0;
+int frame=0, elapseTime, timebase=0;
 char s[50];
 
 int viewPosition[3];
@@ -438,46 +440,40 @@ void setupBuffers() {
 
 }
  
-void setUniforms() {
- 
-    // must be called after glUseProgram
-	// set the variables for the shader
-    glUniformMatrix4fv(projMatrixLoc,  1, false, projMatrix);
-    glUniformMatrix4fv(viewMatrixLoc,  1, false, viewMatrix);
-	glUniformMatrix3fv(normalMatrixLoc, 1, false, normalMatrix);
-	glUniform4fv(ambientColorLoc, 1, ambientColor);
-	glUniform3fv(lightColorLoc, 1, lightColor);
-	glUniform3fv(lightPositionLoc, 1, lightPosition);
-	glUniform1f(ShininessLoc,Shininess);
-	glUniform1f(StrengthLoc, Strength);
-	glUniform3fv(EyeDirectionLoc,1,EyeDirection);
-
+static void setUniformMat4(unsigned int program, const std::string &name, const glm::mat4 &mat)
+{
+	glUseProgram(program);
+	GLint loc=glGetUniformLocation(program, name.c_str());
+	if(loc==-1) return;
+	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
  
 void renderScene(void) {
-
-	
 	frame++;
-	time=glutGet(GLUT_ELAPSED_TIME);
-	if (time - timebase > 1000) {
+	elapseTime=glutGet(GLUT_ELAPSED_TIME);
+	if (elapseTime - timebase > 1000) {
 		sprintf(s,"FPS:%4.2f",
-			frame*1000.0/(time-timebase));
-		timebase = time;
+			frame*1000.0/(elapseTime-timebase));
+		timebase = elapseTime;
 		frame = 0;
 	}
     glutSetWindowTitle(s);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
  
     //placeCam(10,2,10,0,2,-5);
-	placeCam(viewPosition[0],viewPosition[1],viewPosition[2], 0,0,-5);
-	multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(0.0,1.0,0.0, angle)));
-	multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(1.0,0.0,0.0, angle2)));
+	//placeCam(viewPosition[0],viewPosition[1],viewPosition[2], 0,0,-5);
+	//multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(0.0,1.0,0.0, angle)));
+	//multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(1.0,0.0,0.0, angle2)));
     glUseProgram(p);
-    setUniforms();
+	glm::mat4 projection = glm::perspective(glm::radians(53.0f), 640.0f/480, 1.0f, 30.f);
+	setUniformMat4(p, "projMatrix", projection);
+	setUniformMat4(p, "viewMatrix", glm::lookAt(glm::vec3(0, 0, 11), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 
     glBindVertexArray(vert[0]);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
 
+	/*
 	float T[16];	
 	setScale(T,0.5,0.5,0.5);
 	multiplyMatrix(viewMatrix, T);
@@ -488,7 +484,8 @@ void renderScene(void) {
 
     glBindVertexArray(vert[1]);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
-  
+	*/
+
    	glutSwapBuffers();
 }
  
