@@ -1,0 +1,16 @@
+#version 330
+uniform mat4 viewMatrix, projMatrix;
+
+uniform sampler2D myTextureSampler;
+
+in vec3 Color;
+
+in vec2 UV;
+
+out vec4 outputF;
+ 
+void main()
+{
+	// Output
+	outputF = vec4(Color, 1);
+}

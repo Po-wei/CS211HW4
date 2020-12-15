@@ -528,8 +528,10 @@ int main(int argc, char **argv)
 	init();
 	programs['a'] = initShaders("vertexA.txt", "fragA.txt");
 	programs['p'] = initShaders("vertexP.txt", "fragP.txt");
+	programs['g'] = initShaders("vertexG.txt", "fragG.txt");
 	programs['A'] = programs['a'];
 	programs['P'] = programs['p'];
+	programs['G'] = programs['g'];
     setupBuffers(); 
     glutMainLoop();
 
