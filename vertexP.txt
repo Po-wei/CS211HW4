@@ -4,27 +4,25 @@ uniform mat4 viewMatrix, projMatrix;
 uniform mat3 normalMatrix;
 
 layout (location = 0) in vec4 position;
-in vec3 normal;
 in vec3 color;
+in vec3 normal;
 
 layout(location = 1) in vec2 vertexUV;
- 
+
 out vec3 Color;
 out vec3 Normal;
-out vec4 Position;
+out vec3 Position;
 
 // UV is the texture coordinate of this vertex
 out vec2 UV;
 
 void main()
 {
-    Color = color;
+	Color = color;
 	Normal = normalize(normalMatrix * normal);
 	UV = vertexUV;
-
-	// You need to multiply the model view (viewMatrix) and projection (projMatrix) matrices with the position in correct order
-	// After this step you should be able too see a blue cube in the middle of the window
-    gl_Position = projMatrix * viewMatrix * position ;  
+	Position = vec3(position.x, position.y, position.z);
+    gl_Position = projMatrix * viewMatrix * position;  
 }
 
 

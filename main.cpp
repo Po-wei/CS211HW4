@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <memory.h>
 #include <string>
+#include <map>
 #include <math.h>
 
 #include "glm/glm.hpp"
@@ -14,7 +15,7 @@
 
 #include "mymath.h"
  
-#define PI       3.14159265358979323846
+#define PI  3.14159265358979323846
 
 void setTransMatrix(float *mat, float x, float y, float z);
 void multiplyMatrix(float *a, float *b);
@@ -86,7 +87,7 @@ float vertices1[] = {       -1.0f,-1.0f,-1.0f, // triangle 1 : begin
 
 
 
-float normals1[] = {     -1.0f,0.0f,0.0f, // triangle 1 : begin
+float normals1[] = {    -1.0f,0.0f,0.0f, // triangle 1 : begin
 						-1.0f,0.0f,0.0f,
 						-1.0f,0.0f,0.0f, // triangle 1 : end
 
@@ -137,51 +138,47 @@ float normals1[] = {     -1.0f,0.0f,0.0f, // triangle 1 : begin
 
 
  
-float colors1[] = { 0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
-			0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,
-            0.0f,0.0f, 1.0f, 0.3f,
+float colors1[] = {
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
+	0.0f, 0.0f, 1.0f, 0.3f,
 };
-
- 
-// shader names
-const char *vertexFileName = "vertex.txt";
-const char *fragmentFileName = "frag.txt";
  
 // program and shader Id
-GLuint p,v,f;
+std::map<char, GLuint> programs;
  
 // vert attrib locations
 GLuint vertexLoc, colorLoc, normalLoc;
@@ -201,13 +198,13 @@ float projMatrix[16];
 float viewMatrix[16];
 float normalMatrix[9];
 
-float ambientColor[] = {0.2f, 0.2f, 0.2f, 1.0f};
-float lightColor[] = {0.9f, 0.8f, 0.9f};
-float lightPosition[] = { 4.0f, 4.0f, 4.0f};
-float Shininess = 20.0;
-float Strength = 10.0;
-float EyeDirection[] = {0 , 0 , -5};
-
+glm::vec3 ambientColor(0.5f, 0.5f, 0.5f);
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+glm::vec3 lightPosition(0.0f, 0.5f, 2.1f);
+glm::vec3 camaraPos(3.0f, 5.0f, 5.0f);
+glm::vec3 eyePosition(0.0f, 0.0f, 0.0f);
+float shininess = 100.0;
+float strength = 20.0;
 
 int frame=0, elapseTime, timebase=0;
 char s[50];
@@ -223,202 +220,16 @@ int selectY;
 int window_width;
 int window_height;
 GLuint texID;
- 
-// vector opt
-// res = a cross b;
-void xProduct( float *a, float *b, float *res) 
-{
- 
-    res[0] = a[1] * b[2]  -  b[1] * a[2];
-    res[1] = a[2] * b[0]  -  b[2] * a[0];
-    res[2] = a[0] * b[1]  -  b[0] * a[1];
-}
- 
-// normalize a vec3
-void normalize(float *a) 
-{
- 
-    float mag = sqrt(a[0] * a[0]  +  a[1] * a[1]  +  a[2] * a[2]);
-    a[0] /= mag;
-    a[1] /= mag;
-    a[2] /= mag;
-}
-
-// Matrix Opt. - In Opengl 3 we need to handle our own matrix.
- 
-// In this form : a = a * b; 
-void multiplyMatrix(float *a, float *b) 
-{
-    float res[16];
- 
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            res[j*4 + i] = 0.0f;
-            for (int k = 0; k < 4; ++k) {
-                res[j*4 + i] += a[k*4 + i] * b[j*4 + k];
-            }
-        }
-    }
-    memcpy(a, res, 16 * sizeof(float));
-}
-
-// sets the square matrix mat to the ID matrix,
-void setIdentMatrix( float *mat, int size) 
-{
-	// input: size: size of the matrix (for example size=4 means 4 by 4 matrix)
-	// output: mat: Identity matrix
-	for(int i = 0 ; i < size * size ; i++)
-	{
-		mat[i] = 0.0f;
-	}
-
-	for(int i = 0 ; i < size ; i++)
-	{
-		mat[i*size + i] = 1.0f;
-	}
-
-}
- 
-// View Matrix
-// just like glulookat
-void placeCam(float posX, float posY, float posZ, float lookX, float lookY, float lookZ) 
-{
- 
-    float dir[3], right[3], up[3];
- 
-    up[0] = 0.0f;   up[1] = 1.0f;   up[2] = 0.0f;
- 
-    dir[0] =  (lookX - posX);
-    dir[1] =  (lookY - posY);
-    dir[2] =  (lookZ - posZ);
-    normalize(dir);
- 
-	// this order matters
-    xProduct(dir,up,right);
-    normalize(right);
- 
-    xProduct(right,dir,up);
-    normalize(up);
- 
-    float aux[16];
- 
-    viewMatrix[0]  = right[0];
-	viewMatrix[1]  = up[0];
-	viewMatrix[2]  = -dir[0];
-	viewMatrix[3]  = 0.0f;
-    viewMatrix[4]  = right[1];
-	viewMatrix[5]  = up[1];
-	viewMatrix[6]  = -dir[1];
-	viewMatrix[7]  = 0.0f;
-    viewMatrix[8]  = right[2];
-	viewMatrix[9]  = up[2];
-	viewMatrix[10] = -dir[2];
-	viewMatrix[11] = 0.0f;
-    viewMatrix[12] = 0.0f;
-    viewMatrix[13] = 0.0f;
-    viewMatrix[14] =  0.0f;
-    viewMatrix[15] = 1.0f;
-
-	normalMatrix[0] = viewMatrix[0];
-	normalMatrix[1] = viewMatrix[1];
-	normalMatrix[2] = viewMatrix[2];
-	normalMatrix[3] = viewMatrix[4];
-	normalMatrix[4] = viewMatrix[5];
-	normalMatrix[5] = viewMatrix[6];
-	normalMatrix[6] = viewMatrix[8];
-	normalMatrix[7] = viewMatrix[9];
-	normalMatrix[8] = viewMatrix[10];
-
-    setTransMatrix(aux, -posX, -posY, -posZ);
-    multiplyMatrix(viewMatrix, aux);
-	
-}
-
-// Generates a rotation matrix.  Angle is in radian.
-glm::mat4x4 rotationMatrix(float x, float y, float z, float angle)
-{
-	// inputs:  x,y,z: rotation vector
-	//          angle:  angle of rotation arount vector(x,y,z)
-	// output:  returns rotation matrix 
-	glm::mat4x4 initRot(1.0f);
-	return glm::rotate(initRot, angle, glm::vec3(x, y, z));
-}
- 
-// Projection Matrix
-void buildProjMatrix(float fov, float ratio, float nearP, float farP) {
- 
-    float f = 1.0f / tan (fov * (PI / 360.0));
-    setIdentMatrix(projMatrix,4);
-    projMatrix[0] = f / ratio;
-    projMatrix[1 * 4 + 1] = f;
-    projMatrix[2 * 4 + 2] = (farP + nearP) / (nearP - farP);
-    projMatrix[3 * 4 + 2] = (2.0f * farP * nearP) / (nearP - farP);
-    projMatrix[2 * 4 + 3] = -1.0f;
-    projMatrix[3 * 4 + 3] = 0.0f;
-}
-
-// Transformation matrix mat with a translation
-void setTransMatrix(float *mat, float x, float y, float z) {
-	// inputs:  x: translation in x direction 
-	//          y: translation in y direction
-	//          z: translation in z direction
-	// output:  mat : translation matrix 
-	// 0 0 0 x
-	// 0 0 0 y
-	// 0 0 0 z
-	// 0 0 0 1
-	for(int i = 0 ; i < 16 ; i++)
-	{
-		mat[i] = 0.0f;
-	}
-	mat[3] =  x;
-	mat[7] =  y;
-	mat[11] = z;
-	mat[15] = 1.0f;
-}
-
-//Transformation matrix mat with a scaling
-void setScale(float *mat, float xScale, float yScale, float zScale) 
-{
-    // inputs:  xScale: scale in x direction 
-	//          yScale: scale in y direction
-	//          zScale: scale in z direction
-	// output:  mat : Scale matrix
-	// x 0 0 0
-	// 0 y 0 0
-	// 0 0 z 0
-	// 0 0 0 1
-	for(int i = 0 ; i < 16 ; i++)
-	{
-		mat[i] = 0.0f;
-	}
-
-	mat[0] = xScale;
-	mat[5] = yScale;
-	mat[10] = zScale;
-	mat[15] = 1.0f;
-}
 
 void changeSize(int w, int h) {
- 
-    float ratio;
-
     // place viewport to be the entire window
     glViewport(0, 0, w, h);
-    ratio = (1.0f * w) / h;
-    buildProjMatrix(53.13f, ratio, 1.0f, 30.0f);
 }
  
 void setupBuffers() {
+    GLuint buffers[3];
  
-    GLuint buffers[4];
- 
-    glGenVertexArrays(1, vert);
-
-    // first triangle
-    glBindVertexArray(vert[0]);
-    // generate 2 buffers for vert and color
-    glGenBuffers(4, buffers);
+    glGenBuffers(3, buffers);
     // bind buffer for vertices and copy data into buffer
     glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
@@ -436,8 +247,6 @@ void setupBuffers() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(normals1), normals1, GL_STATIC_DRAW);
     glEnableVertexAttribArray(normalLoc);
     glVertexAttribPointer(normalLoc, 3, GL_FLOAT, 0, 0, 0);
-
-
 }
  
 static void setUniformMat4(unsigned int program, const std::string &name, const glm::mat4 &mat)
@@ -447,7 +256,31 @@ static void setUniformMat4(unsigned int program, const std::string &name, const 
 	if(loc==-1) return;
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
+
+static void setUniformMat3(unsigned int program, const std::string &name, const glm::mat3 &mat)
+{
+	glUseProgram(program);
+	GLint loc=glGetUniformLocation(program, name.c_str());
+	if(loc==-1) return;
+	glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
+}
  
+static void setUniformVec3(unsigned int program, const std::string &name, const glm::vec3 &vec)
+{
+	glUseProgram(program);
+	GLint loc=glGetUniformLocation(program, name.c_str());
+	if(loc==-1) return;
+	glUniform3fv(loc, 1, glm::value_ptr(vec));
+}
+
+static void setUniformFloat(unsigned int program, const std::string &name, const float &scalar)
+{
+	glUseProgram(program);
+	GLint loc=glGetUniformLocation(program, name.c_str());
+	if(loc==-1) return;
+	glUniform1f(loc, scalar);
+}
+
 void renderScene(void) {
 	frame++;
 	elapseTime=glutGet(GLUT_ELAPSED_TIME);
@@ -460,17 +293,29 @@ void renderScene(void) {
     glutSetWindowTitle(s);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
- 
-    //placeCam(10,2,10,0,2,-5);
-	//placeCam(viewPosition[0],viewPosition[1],viewPosition[2], 0,0,-5);
-	//multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(0.0,1.0,0.0, angle)));
-	//multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(1.0,0.0,0.0, angle2)));
-    glUseProgram(p);
-	glm::mat4 projection = glm::perspective(glm::radians(53.0f), 640.0f/480, 1.0f, 30.f);
-	setUniformMat4(p, "projMatrix", projection);
-	setUniformMat4(p, "viewMatrix", glm::lookAt(glm::vec3(0, 0, 11), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
+    glUseProgram(programs['a']);
 
-    glBindVertexArray(vert[0]);
+	// Vertex
+	glm::mat4 projectionMat = glm::perspective(glm::radians(53.0f), 640.0f/480, 1.0f, 30.f);
+	glm::mat4 viewMat = glm::lookAt(camaraPos, eyePosition, glm::vec3(0, 1, 0));
+	setUniformMat4(programs['a'], "projMatrix", projectionMat);
+	setUniformMat4(programs['a'], "viewMatrix", viewMat);
+	const float* viewPtr = glm::value_ptr(viewMat);
+	glm::mat3 normMat = glm::mat3();
+	normMat[0] = glm::vec3(viewMat[0]);
+	normMat[1] = glm::vec3(viewMat[1]);
+	normMat[2] = glm::vec3(viewMat[2]);
+	setUniformMat3(programs['a'], "normalMatrix", normMat);
+
+	// Fragment
+	setUniformVec3(programs['a'], "Ambient", ambientColor);
+	setUniformVec3(programs['a'], "LightColor", lightColor);
+	setUniformVec3(programs['a'], "LightPosition", lightPosition);
+	setUniformVec3(programs['a'], "CamaraPos", camaraPos);
+	setUniformFloat(programs['a'], "Shininess", shininess);
+	setUniformFloat(programs['a'], "Strength", strength);
+
+    //glBindVertexArray(vert[0]);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
 
 	/*
@@ -524,27 +369,23 @@ void printProgramInfoLog(GLuint obj)
     }
 }
  
-GLuint initShaders() {
- 
+GLuint initShaders(const char* vertexFile, const char* fragmentFile) {
     char *vertShader = NULL,*fragShader = NULL;
- 
-    GLuint p,v,f;
- 
-    v = glCreateShader(GL_VERTEX_SHADER);
-    f = glCreateShader(GL_FRAGMENT_SHADER);
-    vertShader = getTxtFile(vertexFileName);
-    fragShader = getTxtFile(fragmentFileName);
+    GLuint v = glCreateShader(GL_VERTEX_SHADER);
+    GLuint f = glCreateShader(GL_FRAGMENT_SHADER);
+    vertShader = getTxtFile(vertexFile);
+    fragShader = getTxtFile(fragmentFile);
     const char * vv = vertShader;
     const char * ff = fragShader;
-    glShaderSource(v, 1, &vv,NULL);
-    glShaderSource(f, 1, &ff,NULL);
+    glShaderSource(v, 1, &vv, NULL);
+    glShaderSource(f, 1, &ff, NULL);
     free(vertShader);
 	free(fragShader);
     glCompileShader(v);
     glCompileShader(f);
     printShaderInfoLog(v);
     printShaderInfoLog(f);
-    p = glCreateProgram();
+    GLuint p = glCreateProgram();
     glAttachShader(p,v);
     glAttachShader(p,f);
     glBindFragDataLocation(p, 0, "outputF");
@@ -553,17 +394,8 @@ GLuint initShaders() {
     vertexLoc = glGetAttribLocation(p,"position");
     colorLoc = glGetAttribLocation(p, "color"); 
 	normalLoc = glGetAttribLocation(p, "normal");
-    projMatrixLoc = glGetUniformLocation(p, "projMatrix");
-    viewMatrixLoc = glGetUniformLocation(p, "viewMatrix");
-	normalMatrixLoc = glGetUniformLocation(p, "normalMatrix");
-	ambientColorLoc = glGetUniformLocation(p,"Ambient");
-	lightColorLoc = glGetUniformLocation(p,"LightColor");
-	lightPositionLoc = glGetUniformLocation(p,"LightPosition");
-	ShininessLoc = glGetUniformLocation(p,"Shininess");
-	StrengthLoc = glGetUniformLocation(p,"Strength");
-	EyeDirectionLoc = glGetUniformLocation(p,"EyeDirection");
  
-    return(p);
+    return p;
 }
 
 float deltaAngle = 0.0f;
@@ -679,10 +511,10 @@ int main(int argc, char **argv)
     glEnable(GL_DEPTH_TEST);
 
 	// black background
-    glClearColor(0.0,0.0,0.0,1.0);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	init();
-    p = initShaders(); 
+	programs['a'] = initShaders("vertexA.txt", "fragA.txt");
     setupBuffers(); 
     glutMainLoop();
 
