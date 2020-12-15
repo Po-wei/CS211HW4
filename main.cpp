@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "glm\glm.hpp"
+#include "glm\gtc\type_ptr.hpp"
+#include "glm\gtc\matrix_transform.hpp"
 #include "glew\include\GL\glew.h"
 #include "glut\glut.h"
 #include <memory.h>
@@ -14,7 +17,7 @@ void xProduct( float *a, float *b, float *res);
 void normalize(float *a);
 void setIdentMatrix( float *mat, int size);
 void placeCam(float posX, float posY, float posZ, float lookX, float lookY, float lookZ);
-float * rotationMatrix(float x, float y, float z, float angle);
+glm::mat4x4 rotationMatrix(float x, float y, float z, float angle);
 void init();
 GLuint loadBMP_custom(const char * imagepath);
 
@@ -317,17 +320,13 @@ void placeCam(float posX, float posY, float posZ, float lookX, float lookY, floa
 }
 
 // Generates a rotation matrix.  Angle is in radian.
-float * rotationMatrix(float x, float y, float z, float angle)
+glm::mat4x4 rotationMatrix(float x, float y, float z, float angle)
 {
 	// inputs:  x,y,z: rotation vector
 	//          angle:  angle of rotation arount vector(x,y,z)
 	// output:  returns rotation matrix 
-	float* r = new float[16];
-	for (int i = 0; i < 16; i++)
-	{
-		r[i] = 0.3;
-	}
-	return r;
+	glm::mat4x4 initRot(1.0f);
+	return glm::rotate(initRot, angle, glm::vec3(x, y, z));
 }
  
 // Projection Matrix
@@ -433,9 +432,9 @@ void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
  
     //placeCam(10,2,10,0,2,-5);
-	placeCam(viewPosition[0],viewPosition[1],viewPosition[2],0,0,-5);
-	multiplyMatrix(viewMatrix, rotationMatrix(0.0,1.0,0.0, angle));
-	multiplyMatrix(viewMatrix, rotationMatrix(1.0,0.0,0.0, angle2));
+	placeCam(viewPosition[0],viewPosition[1],viewPosition[2], 0,0,-5);
+	multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(0.0,1.0,0.0, angle)));
+	multiplyMatrix(viewMatrix, (float*)glm::value_ptr(rotationMatrix(1.0,0.0,0.0, angle2)));
     glUseProgram(p);
     setUniforms();
 
@@ -453,7 +452,7 @@ void renderScene(void) {
     glBindVertexArray(vert[1]);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
   
-   glutSwapBuffers();
+   	glutSwapBuffers();
 }
  
 
