@@ -9,37 +9,30 @@ uniform float Shininess;
 uniform float Strength;
 uniform vec3 CamaraPos;
 
-layout (location = 0) in vec4 position;
-in vec3 color;
-in vec3 normal;
-
-layout(location = 1) in vec2 vertexUV;
+layout(location=0) in vec3 position;
+layout(location=1) in vec2 vertexUV;
+layout(location=2) in vec3 normal;
 
 out vec3 Color;
 
-// UV is the texture coordinate of this vertex
-out vec2 UV;
-
 void main()
 {
-	UV = vertexUV;
-	vec3 Position = vec3(position.x, position.y, position.z);
 	vec4 rotatedNormal = modelMatrix * vec4(normal, 0.0);
 	vec3 Normal = normalize(normalMatrix * vec3(rotatedNormal));
 
 	// Diffuse
-	vec3 lightDir = normalize(LightPosition - Position);  
+	vec3 lightDir = normalize(LightPosition - position);  
 	float diff = max(dot(Normal, lightDir), 0.0);
 	vec3 diffuse = diff * LightColor;
 
 	// Specular
-	vec3 viewDir = normalize(CamaraPos - Position);
+	vec3 viewDir = normalize(CamaraPos - position);
 	vec3 reflectDir = reflect(-lightDir, Normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), Shininess);
 	vec3 specular = Strength * spec * LightColor; 
 
-	Color = color * (Ambient + diffuse + specular);
-    gl_Position = projMatrix * viewMatrix * modelMatrix * position;
+	Color = vec3(0.0, 0.0, 1.0) * (Ambient + diffuse + specular);
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }
 
 

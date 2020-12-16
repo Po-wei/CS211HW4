@@ -14,8 +14,6 @@ in vec3 Color;
 in vec3 Normal;
 in vec4 Position;
 
-in vec2 UV;
-
 out vec4 outputF;
  
 void main()
@@ -34,5 +32,5 @@ void main()
 	vec3 specular = Strength * spec * LightColor; 
 
 	// Output
-	outputF = vec4(Color, 1) * vec4(Ambient + diffuse + specular, 1);
+	outputF = vec4(Color * (Ambient + diffuse + specular), 1);
 }

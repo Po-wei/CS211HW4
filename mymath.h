@@ -46,10 +46,3 @@ int writeTxtFile(const char *fn, char *s)
 	}
 	return(res);
 }
-
-
-
-
-
-
-

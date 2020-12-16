@@ -13,6 +13,7 @@ include_directories(
 
 add_executable(hw4
     main.cpp
+    tiny_obj_loader.cpp
 )
 target_link_libraries(hw4
     GLUT::GLUT

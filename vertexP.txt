@@ -3,28 +3,23 @@
 uniform mat4 viewMatrix, projMatrix, modelMatrix;
 uniform mat3 normalMatrix;
 
-layout (location = 0) in vec4 position;
-in vec3 color;
-in vec3 normal;
-
-layout(location = 1) in vec2 vertexUV;
+layout(location=0) in vec3 position;
+layout(location=1) in vec2 vertexUV;
+layout(location=2) in vec3 normal;
 
 out vec3 Color;
 out vec3 Normal;
 out vec4 Position;
 
-// UV is the texture coordinate of this vertex
-out vec2 UV;
-
 void main()
 {
-	Color = color;
+	Color = vec3(0.0, 0.0, 1.0);
 	vec4 rotatedNormal = modelMatrix * vec4(normal, 0.0);
-	Normal = normalize(normalMatrix * vec3(rotatedNormal));
-	UV = vertexUV;
+	//Normal = normalize(normalMatrix * vec3(rotatedNormal));
+	Normal = vec3(rotatedNormal);
 
-	Position = modelMatrix * position;
-    gl_Position = projMatrix * viewMatrix * modelMatrix * position;
+	Position = modelMatrix * vec4(position, 1.0);
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }
 
 

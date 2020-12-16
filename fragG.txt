@@ -5,8 +5,6 @@ uniform sampler2D myTextureSampler;
 
 in vec3 Color;
 
-in vec2 UV;
-
 out vec4 outputF;
  
 void main()

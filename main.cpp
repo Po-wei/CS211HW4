@@ -13,168 +13,13 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/euler_angles.hpp"
 
-
+#include "tiny_obj_loader.h"
 #include "mymath.h"
  
 #define PI  3.14159265358979323846
-
-GLuint loadBMP_custom(const char * imagepath);
-// vertices for triangle
-float vertices1[] = {
-	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-	-1.0f,-1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f, // triangle 1 : end
-
-	1.0f, 1.0f,-1.0f, // triangle 2 : begin
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f, // triangle 2 : end
-
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-
-	1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	-1.0f,-1.0f,-1.0f,
-
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-
-	-1.0f, 1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f,-1.0f,
-
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f
-};
-
-float normals1[] = {
-	-1.0f,0.0f,0.0f, // triangle 1 : begin
-	-1.0f,0.0f,0.0f,
-	-1.0f,0.0f,0.0f, // triangle 1 : end
-
-	0.0f,0.0f,-1.0f, // triangle 2 : begin
-	0.0f,0.0f,-1.0f,
-	0.0f,0.0f,-1.0f, // triangle 2 : end
-
-	0.0f,-1.0f,0.0f,
-	0.0f,-1.0f,0.0f,
-	0.0f,-1.0f,0.0f,
-
-	0.0f,0.0f,-1.0f,
-	0.0f,0.0f,-1.0f,
-	0.0f,0.0f,-1.0f,
-
-	-1.0f,0.0f,0.0f,
-	-1.0f,0.0f,0.0f,
-	-1.0f,0.0f,0.0f,
-
-	0.0f,-1.0f,0.0f,
-	0.0f,-1.0f,0.0f,
-	0.0f,-1.0f,0.0f,
-
-	0.0f,0.0f, 1.0f,
-	0.0f,0.0f, 1.0f,
-	0.0f,0.0f, 1.0f,
-
-	1.0f,0.0f,0.0f,
-	1.0f,0.0f,0.0f,
-	1.0f,0.0f,0.0f,
-
-	1.0f,0.0f,0.0f,
-	1.0f,0.0f,0.0f,
-	1.0f,0.0f,0.0f,
-
-	0.0f, 1.0f,0.0f,
-	0.0f, 1.0f,0.0f,
-	0.0f, 1.0f,0.0f,
-
-	0.0f, 1.0f,0.0f,
-	0.0f, 1.0f,0.0f,
-	0.0f, 1.0f,0.0f,
-
-	0.0f,0.0f, 1.0f,
-	0.0f,0.0f, 1.0f,
-	0.0f,0.0f, 1.0f
-};
-
-float colors1[] = {
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-	0.0f, 0.0f, 1.0f, 0.3f,
-};
  
 // program and shader Id
 std::map<char, GLuint> programs;
- 
-// vert attrib locations
-GLuint vertexLoc, colorLoc, normalLoc;
- 
-// uniform var locations
-GLuint projMatrixLoc, viewMatrixLoc, normalMatrixLoc;
-
-GLuint ambientColorLoc,lightColorLoc, lightPositionLoc, ShininessLoc, StrengthLoc, EyeDirectionLoc;
-
-GLuint textureLoc,samplerLoc;
- 
-// vert array obj Id
-GLuint vert[3];
-
 char currentKey = 'a';
  
 // storage for matrices
@@ -202,32 +47,116 @@ int window_width;
 int window_height;
 GLuint texID;
 
-void changeSize(int w, int h) {
-    // place viewport to be the entire window
-    glViewport(0, 0, w, h);
-}
- 
-void setupBuffers() {
-    GLuint buffers[3];
- 
-    glGenBuffers(3, buffers);
-    // bind buffer for vertices and copy data into buffer
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(vertexLoc);
-    glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, 0, 0, 0);
- 
-    // bind buffer for colors and copy data into buffer
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors1), colors1, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(colorLoc);
-    glVertexAttribPointer(colorLoc, 4, GL_FLOAT, 0, 0, 0);
+struct object_struct{
+	unsigned int vao;
+	unsigned int vbo[4];
+	unsigned int texture;
+	unsigned int indiceCount;
+} ;
 
-	// bind buffer for normals and copy data into buffer
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(normals1), normals1, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(normalLoc);
-    glVertexAttribPointer(normalLoc, 3, GL_FLOAT, 0, 0, 0);
+static unsigned char *load_bmp(const char *bmp, unsigned int *width, unsigned int *height, unsigned short int *bits)
+{
+	unsigned char *result=nullptr;
+	FILE *fp = fopen(bmp, "rb");
+	if(!fp)
+		return nullptr;
+	char type[2];
+	unsigned int size, offset;
+	// check for magic signature	
+	fread(type, sizeof(type), 1, fp);
+	if(type[0]==0x42 || type[1]==0x4d){
+		fread(&size, sizeof(size), 1, fp);
+		// ignore 2 two-byte reversed fields
+		fseek(fp, 4, SEEK_CUR);
+		fread(&offset, sizeof(offset), 1, fp);
+		// ignore size of bmpinfoheader field
+		fseek(fp, 4, SEEK_CUR);
+		fread(width, sizeof(*width), 1, fp);
+		fread(height, sizeof(*height), 1, fp);
+		// ignore planes field
+		fseek(fp, 2, SEEK_CUR);
+		fread(bits, sizeof(*bits), 1, fp);
+		unsigned char *pos = result = new unsigned char[size-offset];
+		fseek(fp, offset, SEEK_SET);
+		while(size-ftell(fp)>0)
+			pos+=fread(pos, 1, size-ftell(fp), fp);
+	}
+	fclose(fp);
+	return result;
+}
+
+static object_struct add_obj(const char *filename, const char *texbmp)
+{
+	object_struct new_node;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+
+	std::string err = tinyobj::LoadObj(shapes, materials, filename);
+
+	if (!err.empty()||shapes.size()==0)
+	{
+		std::cerr<<err<<std::endl;
+		exit(1);
+	}
+
+	glGenVertexArrays(1, &new_node.vao);
+	glGenBuffers(4, new_node.vbo);
+	glGenTextures(1, &new_node.texture);
+
+	glBindVertexArray(new_node.vao);
+
+	// Upload postion array
+	glBindBuffer(GL_ARRAY_BUFFER, new_node.vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*shapes[0].mesh.positions.size(),
+			shapes[0].mesh.positions.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	if(shapes[0].mesh.texcoords.size()>0)
+	{
+
+		// Upload texCoord array
+		glBindBuffer(GL_ARRAY_BUFFER, new_node.vbo[1]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*shapes[0].mesh.texcoords.size(),
+				shapes[0].mesh.texcoords.data(), GL_STATIC_DRAW);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindTexture( GL_TEXTURE_2D, new_node.texture);
+		unsigned int width, height;
+		unsigned short int bits;
+		unsigned char *bgr=load_bmp(texbmp, &width, &height, &bits);
+		GLenum format = (bits == 24? GL_BGR: GL_BGRA);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, bgr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		delete [] bgr;
+	}
+
+	if(shapes[0].mesh.normals.size()>0)
+	{
+		// Upload normal array
+		glBindBuffer(GL_ARRAY_BUFFER, new_node.vbo[2]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*shapes[0].mesh.normals.size(),
+				shapes[0].mesh.normals.data(), GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	}
+
+	// Setup index buffer for glDrawElements
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, new_node.vbo[3]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*shapes[0].mesh.indices.size(),
+			shapes[0].mesh.indices.data(), GL_STATIC_DRAW);
+
+	new_node.indiceCount = shapes[0].mesh.indices.size();
+
+	glBindVertexArray(0);
+	return new_node;
+}
+
+void changeSize(int w, int h) {
+    glViewport(0, 0, w, h);
 }
  
 static void setUniformMat4(unsigned int program, const std::string &name, const glm::mat4 &mat)
@@ -263,6 +192,8 @@ static void setUniformFloat(unsigned int program, const std::string &name, const
 }
 
 void renderScene(void) {
+	static object_struct sun = add_obj("sun.obj", "sun.bmp");
+	static object_struct square = add_obj("square.obj", "texture.bmp");
 	static int timebase=glutGet(GLUT_ELAPSED_TIME);
 	static unsigned int ticks = 0;
 	if (glutGet(GLUT_ELAPSED_TIME) != timebase && released) {
@@ -301,13 +232,16 @@ void renderScene(void) {
 	setUniformFloat(programs[currentKey], "Shininess", shininess);
 	setUniformFloat(programs[currentKey], "Strength", strength);
 
-	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
+	glBindVertexArray(square.vao);
+	glBindTexture(GL_TEXTURE_2D, square.texture);
+	glDrawElements(GL_TRIANGLES, square.indiceCount, GL_UNSIGNED_INT, nullptr);
 
 	modelMat = glm::scale(modelMat, glm::vec3(0.5f, 0.5f, 0.5f));
 	modelMat = glm::translate(modelMat, glm::vec3(5.0f, 0.0f, 5.0f));
 	setUniformMat4(programs[currentKey], "modelMatrix", modelMat);
-	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
+	glDrawElements(GL_TRIANGLES, square.indiceCount, GL_UNSIGNED_INT, nullptr);
 
+	glBindVertexArray(0);
    	glutSwapBuffers();
 }
  
@@ -347,15 +281,12 @@ void printProgramInfoLog(GLuint obj)
 }
  
 GLuint initShaders(const char* vertexFile, const char* fragmentFile) {
-    char *vertShader = NULL,*fragShader = NULL;
     GLuint v = glCreateShader(GL_VERTEX_SHADER);
     GLuint f = glCreateShader(GL_FRAGMENT_SHADER);
-    vertShader = getTxtFile(vertexFile);
-    fragShader = getTxtFile(fragmentFile);
-    const char * vv = vertShader;
-    const char * ff = fragShader;
-    glShaderSource(v, 1, &vv, NULL);
-    glShaderSource(f, 1, &ff, NULL);
+    char* vertShader = getTxtFile(vertexFile);
+    char* fragShader = getTxtFile(fragmentFile);
+    glShaderSource(v, 1, (const GLchar**)&vertShader, NULL);
+    glShaderSource(f, 1, (const GLchar**)&fragShader, NULL);
     free(vertShader);
 	free(fragShader);
     glCompileShader(v);
@@ -365,13 +296,9 @@ GLuint initShaders(const char* vertexFile, const char* fragmentFile) {
     GLuint p = glCreateProgram();
     glAttachShader(p,v);
     glAttachShader(p,f);
-    glBindFragDataLocation(p, 0, "outputF");
+	glBindFragDataLocation(p, 0, "outputF");
     glLinkProgram(p);
     printProgramInfoLog(p);
-    vertexLoc = glGetAttribLocation(p,"position");
-    colorLoc = glGetAttribLocation(p, "color"); 
-	normalLoc = glGetAttribLocation(p, "normal");
- 
     return p;
 }
 
@@ -475,11 +402,11 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(keyboardAction);
 
 	// check if a particular extension is available on your platform
+	glewExperimental = GL_TRUE;
     glewInit();
-    if (glewIsSupported("GL_VERSION_3_3"))
+    if (glewIsSupported("GL_VERSION_3_3")){
         printf("OpenGL 3.3 is supported\n");
-    else 
-	{
+	}else{
         printf("OpenGL 3.3 not supported\n");
         exit(1);
     }
@@ -487,14 +414,12 @@ int main(int argc, char **argv)
 
 	// black background
     glClearColor(0.2, 0.2, 0.2, 1.0);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	programs['a'] = initShaders("vertexA.txt", "fragA.txt");
 	programs['p'] = initShaders("vertexP.txt", "fragP.txt");
 	programs['g'] = initShaders("vertexG.txt", "fragG.txt");
 	programs['A'] = programs['a'];
 	programs['P'] = programs['p'];
 	programs['G'] = programs['g'];
-    setupBuffers(); 
     glutMainLoop();
 
     return(0); 
