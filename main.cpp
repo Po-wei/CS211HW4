@@ -120,8 +120,6 @@ float normals1[] = {
 	0.0f,0.0f, 1.0f
 };
 
-
- 
 float colors1[] = {
 	0.0f, 0.0f, 1.0f, 0.3f,
 	0.0f, 0.0f, 1.0f, 0.3f,
@@ -186,19 +184,17 @@ float normalMatrix[9];
 
 glm::vec3 ambientColor(0.5f, 0.5f, 0.5f);
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-glm::vec3 lightPosition(0.0f, 0.0f, 2.0f);
-glm::vec3 camaraPos(8.0f, 8.0f, 8.0f);
+glm::vec3 lightPosition(0.0f, 4.0f, 6.0f);
+glm::vec3 camaraPos(0.0f, 0.0f, 8.0f);
 glm::vec3 eyePosition(0.0f, 0.0f, 0.0f);
-float shininess = 256.0;
-float strength = 10.0;
-
-int frame=0, elapseTime, timebase=0;
-char s[50];
+float shininess = 2000.0;
+float strength = 0.1;
 
 int viewPosition[3];
 float angleX = 0.0f, angleY = 0.0f;
 int startX;
 int startY;
+bool released = true;
 
 int selectX;
 int selectY;
@@ -267,24 +263,27 @@ static void setUniformFloat(unsigned int program, const std::string &name, const
 }
 
 void renderScene(void) {
-	frame++;
-	elapseTime=glutGet(GLUT_ELAPSED_TIME);
-	if (elapseTime - timebase > 1000) {
-		sprintf(s,"FPS:%4.2f",
-			frame*1000.0/(elapseTime-timebase));
-		timebase = elapseTime;
-		frame = 0;
+	static int timebase=glutGet(GLUT_ELAPSED_TIME);
+	static unsigned int ticks = 0;
+	if (glutGet(GLUT_ELAPSED_TIME) != timebase && released) {
+		ticks += 1;
 	}
-    glutSetWindowTitle(s);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(programs[currentKey]);
 
 	// Vertex
 	glm::mat4 projectionMat = glm::perspective(glm::radians(53.0f), 640.0f/480, 1.0f, 30.f);
-	glm::mat4 viewMat = glm::lookAt(camaraPos, eyePosition, glm::vec3(0, 1, 0));
-	glm::mat4 modelMat = glm::rotate_slow(glm::mat4(1.0f), (float)elapseTime / 1000, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 camaraMat = glm::lookAt(camaraPos, eyePosition, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 modelMat = glm::rotate_slow(glm::mat4(1.0f), (float) ticks / 100, glm::vec3(0.0f, 1.0f, 0.0f));
 	setUniformMat4(programs[currentKey], "projMatrix", projectionMat);
+	// Camara rotate
+	glm::vec4 camaraUp = camaraMat * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	glm::vec4 camaraLeft = camaraMat * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+	glm::mat4 camaraRotate = glm::rotate(glm::mat4(1.0f), angleX / 10, glm::vec3(camaraUp));
+	camaraRotate = glm::rotate(camaraRotate, angleY / 10, glm::vec3(camaraLeft));
+	glm::vec4 realCamaraPos = camaraRotate * glm::vec4(camaraPos, 1.0f);
+	glm::mat4 viewMat = glm::lookAt(glm::vec3(realCamaraPos), eyePosition, glm::vec3(0.0f, 1.0f, 0.0f));
 	setUniformMat4(programs[currentKey], "viewMatrix", viewMat);
 	setUniformMat4(programs[currentKey], "modelMatrix", modelMat);
 	const float* viewPtr = glm::value_ptr(viewMat);
@@ -382,58 +381,63 @@ void mouseMove(int x, int y)
 	// x and y is the mouse position.
 	int motionMode = 1;
 	switch(motionMode){
-  case 0:
-    /* No mouse button is pressed... do nothing */
-    /* return; */
-    break;
+		case 0:
+			/* No mouse button is pressed... do nothing */
+			/* return; */
+			break;
 
-  case 1:
-    /* rotating the view*/
-	angleX = angleX + (x - startX)/2;
-    angleY = angleY + (y - startY)/2;
-    startX = x;
-    startY = y;
-    break;
+		case 1:
+			/* rotating the view*/
+			angleX = angleX + (x - startX)/2;
+			angleY = angleY + (y - startY)/2;
+			startX = x;
+			startY = y;
+			break;
 
-  case 2:
+		case 2:
 
-    break;
+			break;
 
-  case 3:
+		case 3:
 
-    break;
+			break;
   }
 	
 }
 
 //This event occur when you press a mouse button.
+#define WHEEL_UP 3
+#define WHEEL_DOWN 4
+#define WHEEL_STEP 0.2f
 void mouseButton(int button, int state, int x, int y) 
 {
 	startX = x;
 	startY = y;
 	// only start motion if the left button is pressed
-	if (button == GLUT_LEFT_BUTTON) 
-	{
+	if (button == GLUT_LEFT_BUTTON){
 		// when the button is released
-		if (state == GLUT_UP) 
-		{
-			  window_width = glutGet(GLUT_WINDOW_WIDTH);
-			  window_height = glutGet(GLUT_WINDOW_HEIGHT);
- 
-			  GLbyte color[4];
-			  GLfloat depth;
-			  GLuint index;
- 
-			  glReadPixels(x, window_height - y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
-			  glReadPixels(x, window_height - y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-			  glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
- 
-			  printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
-					 x, y, color[0], color[1], color[2], color[3], depth, index);
-					}
-		else  // state = GLUT_DOWN	
-		{
+		if (state == GLUT_UP) {
+			released = true;
+			window_width = glutGet(GLUT_WINDOW_WIDTH);
+			window_height = glutGet(GLUT_WINDOW_HEIGHT);
+
+			GLbyte color[4];
+			GLfloat depth;
+			GLuint index;
+
+			glReadPixels(x, window_height - y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+			glReadPixels(x, window_height - y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+			glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+
+			printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
+					x, y, color[0], color[1], color[2], color[3], depth, index);
+		}else{  // state = GLUT_DOWN	
+			released = false;
 		}
+	}else if(button == WHEEL_UP){
+		camaraPos.z -= WHEEL_STEP;
+	}else if(button == WHEEL_DOWN){
+		camaraPos.z += WHEEL_STEP;
 	}
 }
 
@@ -458,9 +462,9 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100,100);
-    glutInitWindowSize(640,480);
+    glutInitWindowSize(800, 600);
     glutCreateWindow("ICS Graphics");
-    glutSetWindowTitle(s);
+    glutSetWindowTitle("Assignment 4");
 	// call back functions
     glutDisplayFunc(renderScene);
     glutIdleFunc(renderScene);
