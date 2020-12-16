@@ -1,6 +1,6 @@
 #version 330
  
-uniform mat4 viewMatrix, projMatrix;
+uniform mat4 viewMatrix, projMatrix, modelMatrix;
 uniform mat3 normalMatrix;
 
 layout (location = 0) in vec4 position;
@@ -11,7 +11,7 @@ layout(location = 1) in vec2 vertexUV;
 
 out vec3 Color;
 out vec3 Normal;
-out vec3 Position;
+out vec4 Position;
 
 // UV is the texture coordinate of this vertex
 out vec2 UV;
@@ -21,8 +21,9 @@ void main()
 	Color = color;
 	Normal = normalize(normalMatrix * normal);
 	UV = vertexUV;
-	Position = vec3(position.x, position.y, position.z);
-    gl_Position = projMatrix * viewMatrix * position;  
+
+	Position = modelMatrix * position;
+    gl_Position = projMatrix * viewMatrix * modelMatrix * position;
 }
 
 

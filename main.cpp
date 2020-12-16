@@ -11,130 +11,114 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/euler_angles.hpp"
 
 
 #include "mymath.h"
  
 #define PI  3.14159265358979323846
 
-void setTransMatrix(float *mat, float x, float y, float z);
-void multiplyMatrix(float *a, float *b);
-void xProduct( float *a, float *b, float *res);
-void normalize(float *a);
-void setIdentMatrix( float *mat, int size);
-void placeCam(float posX, float posY, float posZ, float lookX, float lookY, float lookZ);
-glm::mat4x4 rotationMatrix(float x, float y, float z, float angle);
-void init();
 GLuint loadBMP_custom(const char * imagepath);
+// vertices for triangle
+float vertices1[] = {
+	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
+	-1.0f,-1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f, // triangle 1 : end
 
-struct vec3
-{
-	float x;
-	float y;
-	float z;
+	1.0f, 1.0f,-1.0f, // triangle 2 : begin
+	-1.0f,-1.0f,-1.0f,
+	-1.0f, 1.0f,-1.0f, // triangle 2 : end
+
+	1.0f,-1.0f, 1.0f,
+	-1.0f,-1.0f,-1.0f,
+	1.0f,-1.0f,-1.0f,
+
+	1.0f, 1.0f,-1.0f,
+	1.0f,-1.0f,-1.0f,
+	-1.0f,-1.0f,-1.0f,
+
+	-1.0f,-1.0f,-1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f,-1.0f,
+
+	1.0f,-1.0f, 1.0f,
+	-1.0f,-1.0f, 1.0f,
+	-1.0f,-1.0f,-1.0f,
+
+	-1.0f, 1.0f, 1.0f,
+	-1.0f,-1.0f, 1.0f,
+	1.0f,-1.0f, 1.0f,
+
+	1.0f, 1.0f, 1.0f,
+	1.0f,-1.0f,-1.0f,
+	1.0f, 1.0f,-1.0f,
+
+	1.0f,-1.0f,-1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f,-1.0f, 1.0f,
+
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f,-1.0f,
+	-1.0f, 1.0f,-1.0f,
+
+	1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f,-1.0f,
+	-1.0f, 1.0f, 1.0f,
+
+	1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f,
+	1.0f,-1.0f, 1.0f
 };
 
-// vertices for triangle
-float vertices1[] = {       -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-							-1.0f,-1.0f, 1.0f,
-							-1.0f, 1.0f, 1.0f, // triangle 1 : end
+float normals1[] = {
+	-1.0f,0.0f,0.0f, // triangle 1 : begin
+	-1.0f,0.0f,0.0f,
+	-1.0f,0.0f,0.0f, // triangle 1 : end
 
-							1.0f, 1.0f,-1.0f, // triangle 2 : begin
-							-1.0f,-1.0f,-1.0f,
-							-1.0f, 1.0f,-1.0f, // triangle 2 : end
+	0.0f,0.0f,-1.0f, // triangle 2 : begin
+	0.0f,0.0f,-1.0f,
+	0.0f,0.0f,-1.0f, // triangle 2 : end
 
-							1.0f,-1.0f, 1.0f,
-							-1.0f,-1.0f,-1.0f,
-							1.0f,-1.0f,-1.0f,
+	0.0f,-1.0f,0.0f,
+	0.0f,-1.0f,0.0f,
+	0.0f,-1.0f,0.0f,
 
-							1.0f, 1.0f,-1.0f,
-							1.0f,-1.0f,-1.0f,
-							-1.0f,-1.0f,-1.0f,
+	0.0f,0.0f,-1.0f,
+	0.0f,0.0f,-1.0f,
+	0.0f,0.0f,-1.0f,
 
-							-1.0f,-1.0f,-1.0f,
-							-1.0f, 1.0f, 1.0f,
-							-1.0f, 1.0f,-1.0f,
+	-1.0f,0.0f,0.0f,
+	-1.0f,0.0f,0.0f,
+	-1.0f,0.0f,0.0f,
 
-							1.0f,-1.0f, 1.0f,
-							-1.0f,-1.0f, 1.0f,
-							-1.0f,-1.0f,-1.0f,
+	0.0f,-1.0f,0.0f,
+	0.0f,-1.0f,0.0f,
+	0.0f,-1.0f,0.0f,
 
-							-1.0f, 1.0f, 1.0f,
-							-1.0f,-1.0f, 1.0f,
-							1.0f,-1.0f, 1.0f,
+	0.0f,0.0f, 1.0f,
+	0.0f,0.0f, 1.0f,
+	0.0f,0.0f, 1.0f,
 
-							1.0f, 1.0f, 1.0f,
-							1.0f,-1.0f,-1.0f,
-							1.0f, 1.0f,-1.0f,
+	1.0f,0.0f,0.0f,
+	1.0f,0.0f,0.0f,
+	1.0f,0.0f,0.0f,
 
-							1.0f,-1.0f,-1.0f,
-							1.0f, 1.0f, 1.0f,
-							1.0f,-1.0f, 1.0f,
+	1.0f,0.0f,0.0f,
+	1.0f,0.0f,0.0f,
+	1.0f,0.0f,0.0f,
 
-							1.0f, 1.0f, 1.0f,
-							1.0f, 1.0f,-1.0f,
-							-1.0f, 1.0f,-1.0f,
+	0.0f, 1.0f,0.0f,
+	0.0f, 1.0f,0.0f,
+	0.0f, 1.0f,0.0f,
 
-							1.0f, 1.0f, 1.0f,
-							-1.0f, 1.0f,-1.0f,
-							-1.0f, 1.0f, 1.0f,
+	0.0f, 1.0f,0.0f,
+	0.0f, 1.0f,0.0f,
+	0.0f, 1.0f,0.0f,
 
-							1.0f, 1.0f, 1.0f,
-							-1.0f, 1.0f, 1.0f,
-							1.0f,-1.0f, 1.0f
-						};
-
-
-
-
-float normals1[] = {    -1.0f,0.0f,0.0f, // triangle 1 : begin
-						-1.0f,0.0f,0.0f,
-						-1.0f,0.0f,0.0f, // triangle 1 : end
-
-						0.0f,0.0f,-1.0f, // triangle 2 : begin
-						0.0f,0.0f,-1.0f,
-						0.0f,0.0f,-1.0f, // triangle 2 : end
-
-						0.0f,-1.0f,0.0f,
-						0.0f,-1.0f,0.0f,
-						0.0f,-1.0f,0.0f,
-
-						0.0f,0.0f,-1.0f,
-						0.0f,0.0f,-1.0f,
-						0.0f,0.0f,-1.0f,
-
-						-1.0f,0.0f,0.0f,
-						-1.0f,0.0f,0.0f,
-						-1.0f,0.0f,0.0f,
-
-						0.0f,-1.0f,0.0f,
-						0.0f,-1.0f,0.0f,
-						0.0f,-1.0f,0.0f,
-
-						0.0f,0.0f, 1.0f,
-						0.0f,0.0f, 1.0f,
-						0.0f,0.0f, 1.0f,
-
-						1.0f,0.0f,0.0f,
-						1.0f,0.0f,0.0f,
-						1.0f,0.0f,0.0f,
-
-						1.0f,0.0f,0.0f,
-						1.0f,0.0f,0.0f,
-						1.0f,0.0f,0.0f,
-
-						0.0f, 1.0f,0.0f,
-						0.0f, 1.0f,0.0f,
-						0.0f, 1.0f,0.0f,
-
-						0.0f, 1.0f,0.0f,
-						0.0f, 1.0f,0.0f,
-						0.0f, 1.0f,0.0f,
-
-						0.0f,0.0f, 1.0f,
-						0.0f,0.0f, 1.0f,
-						0.0f,0.0f, 1.0f
-						};
+	0.0f,0.0f, 1.0f,
+	0.0f,0.0f, 1.0f,
+	0.0f,0.0f, 1.0f
+};
 
 
  
@@ -202,18 +186,17 @@ float normalMatrix[9];
 
 glm::vec3 ambientColor(0.5f, 0.5f, 0.5f);
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-glm::vec3 lightPosition(0.0f, 0.5f, 2.1f);
-glm::vec3 camaraPos(3.0f, 5.0f, 5.0f);
+glm::vec3 lightPosition(0.0f, 0.0f, 2.0f);
+glm::vec3 camaraPos(8.0f, 8.0f, 8.0f);
 glm::vec3 eyePosition(0.0f, 0.0f, 0.0f);
-float shininess = 100.0;
-float strength = 20.0;
+float shininess = 256.0;
+float strength = 10.0;
 
 int frame=0, elapseTime, timebase=0;
 char s[50];
 
 int viewPosition[3];
-float angle = 0.0f;
-float angle2 = 0.0f;
+float angleX = 0.0f, angleY = 0.0f;
 int startX;
 int startY;
 
@@ -300,8 +283,10 @@ void renderScene(void) {
 	// Vertex
 	glm::mat4 projectionMat = glm::perspective(glm::radians(53.0f), 640.0f/480, 1.0f, 30.f);
 	glm::mat4 viewMat = glm::lookAt(camaraPos, eyePosition, glm::vec3(0, 1, 0));
+	glm::mat4 modelMat = glm::rotate_slow(glm::mat4(1.0f), (float)elapseTime / 1000, glm::vec3(0.0f, 1.0f, 0.0f));
 	setUniformMat4(programs[currentKey], "projMatrix", projectionMat);
 	setUniformMat4(programs[currentKey], "viewMatrix", viewMat);
+	setUniformMat4(programs[currentKey], "modelMatrix", modelMat);
 	const float* viewPtr = glm::value_ptr(viewMat);
 	glm::mat3 normMat = glm::mat3();
 	normMat[0] = glm::vec3(viewMat[0]);
@@ -317,21 +302,12 @@ void renderScene(void) {
 	setUniformFloat(programs[currentKey], "Shininess", shininess);
 	setUniformFloat(programs[currentKey], "Strength", strength);
 
-    //glBindVertexArray(vert[0]);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
 
-	/*
-	float T[16];	
-	setScale(T,0.5,0.5,0.5);
-	multiplyMatrix(viewMatrix, T);
-	setTransMatrix(T,4,0,0);
-	multiplyMatrix(viewMatrix, T);
-
-    setUniforms();
-
-    glBindVertexArray(vert[1]);
-    glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
-	*/
+	modelMat = glm::scale(modelMat, glm::vec3(0.5f, 0.5f, 0.5f));
+	modelMat = glm::translate(modelMat, glm::vec3(5.0f, 0.0f, 5.0f));
+	setUniformMat4(programs[currentKey], "modelMatrix", modelMat);
+	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices1));
 
    	glutSwapBuffers();
 }
@@ -400,16 +376,10 @@ GLuint initShaders(const char* vertexFile, const char* fragmentFile) {
     return p;
 }
 
-float deltaAngle = 0.0f;
-int xOrigin = -1;
-
-
-
 //This event will trigger when you have a mouse button pressed down.
 void mouseMove(int x, int y) 
 {
 	// x and y is the mouse position.
-	//printf("%d ,  %d \n",x,y);
 	int motionMode = 1;
 	switch(motionMode){
   case 0:
@@ -419,8 +389,8 @@ void mouseMove(int x, int y)
 
   case 1:
     /* rotating the view*/
-	angle = angle + (x - startX)/2;
-    angle2 = angle2 + (y - startY)/2;
+	angleX = angleX + (x - startX)/2;
+    angleY = angleY + (y - startY)/2;
     startX = x;
     startY = y;
     break;
@@ -441,9 +411,6 @@ void mouseButton(int button, int state, int x, int y)
 {
 	startX = x;
 	startY = y;
-	selectX = x;
-	selectY = y;
-	//printf("%d , %d",selectX,selectY);
 	// only start motion if the left button is pressed
 	if (button == GLUT_LEFT_BUTTON) 
 	{
@@ -484,14 +451,6 @@ void keyboardAction(unsigned char key, int x, int y)
 	}
 	printf("Keyboard press %c \n", key);
 }
-
-
-void init(){
-	viewPosition[0] = 0;
-	viewPosition[1] = 0;
-	viewPosition[2] = 11;
-	
-}
  
 int main(int argc, char **argv) 
 {
@@ -525,7 +484,6 @@ int main(int argc, char **argv)
 	// black background
     glClearColor(0.2, 0.2, 0.2, 1.0);
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-	init();
 	programs['a'] = initShaders("vertexA.txt", "fragA.txt");
 	programs['p'] = initShaders("vertexP.txt", "fragP.txt");
 	programs['g'] = initShaders("vertexG.txt", "fragG.txt");

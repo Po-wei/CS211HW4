@@ -1,6 +1,6 @@
 #version 330
  
-uniform mat4 viewMatrix, projMatrix;
+uniform mat4 viewMatrix, projMatrix, modelMatrix;
 uniform mat3 normalMatrix;
 
 layout (location = 0) in vec4 position;
@@ -20,7 +20,7 @@ void main()
 {
 	Color = color;
 	UV = vertexUV;
-    gl_Position = projMatrix * viewMatrix * position;  
+    gl_Position = projMatrix * viewMatrix * modelMatrix * position;
 }
 
 
