@@ -19,7 +19,8 @@ out vec2 UV;
 void main()
 {
 	Color = color;
-	Normal = normalize(normalMatrix * normal);
+	vec4 rotatedNormal = modelMatrix * vec4(normal, 0.0);
+	Normal = normalize(normalMatrix * vec3(rotatedNormal));
 	UV = vertexUV;
 
 	Position = modelMatrix * position;

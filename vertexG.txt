@@ -24,7 +24,8 @@ void main()
 {
 	UV = vertexUV;
 	vec3 Position = vec3(position.x, position.y, position.z);
-	vec3 Normal = normalize(normalMatrix * normal);
+	vec4 rotatedNormal = modelMatrix * vec4(normal, 0.0);
+	vec3 Normal = normalize(normalMatrix * vec3(rotatedNormal));
 
 	// Diffuse
 	vec3 lightDir = normalize(LightPosition - Position);  
