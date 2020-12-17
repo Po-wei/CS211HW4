@@ -1,11 +1,13 @@
 #version 330
 
-in vec3 Color;
+in vec2 UV;
 
 out vec4 outputF;
- 
+
+uniform sampler2D uSampler;
+
 void main()
 {
 	// Output
-	outputF = vec4(Color, 1);
+	outputF = texture(uSampler, UV);
 }

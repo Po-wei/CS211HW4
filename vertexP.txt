@@ -7,16 +7,14 @@ layout(location=0) in vec3 position;
 layout(location=1) in vec2 vertexUV;
 layout(location=2) in vec3 normal;
 
-out vec3 Color;
+out vec2 UV;
 out vec3 Normal;
 out vec4 Position;
 
 void main()
 {
-	Color = vec3(0.0, 0.0, 1.0);
-	vec4 rotatedNormal = modelMatrix * vec4(normal, 0.0);
-	//Normal = normalize(normalMatrix * vec3(rotatedNormal));
-	Normal = vec3(rotatedNormal);
+	UV = vertexUV;
+	Normal = vec3(modelMatrix * vec4(normal, 0.0));
 
 	Position = modelMatrix * vec4(position, 1.0);
     gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);

@@ -8,9 +8,9 @@ uniform float Shininess;
 uniform float Strength;
 uniform vec3 CamaraPos;
 
-uniform sampler2D myTextureSampler;
+uniform sampler2D uSampler;
 
-in vec3 Color;
+in vec2 UV;
 in vec3 Normal;
 in vec4 Position;
 
@@ -32,5 +32,5 @@ void main()
 	vec3 specular = Strength * spec * LightColor; 
 
 	// Output
-	outputF = vec4(Color * (Ambient + diffuse + specular), 1);
+	outputF = texture(uSampler, UV) * vec4(Ambient + diffuse + specular, 1);
 }

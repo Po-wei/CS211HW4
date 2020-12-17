@@ -20,7 +20,9 @@
  
 // program and shader Id
 std::map<char, GLuint> programs;
+GLuint lightSourceProgram;
 char currentKey = 'a';
+bool isSquare = true, isTextured = false;
  
 // storage for matrices
 float projMatrix[16];
@@ -29,11 +31,12 @@ float normalMatrix[9];
 
 glm::vec3 ambientColor(0.5f, 0.5f, 0.5f);
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-glm::vec3 lightPosition(0.0f, 4.0f, 6.0f);
-glm::vec3 camaraPos(0.0f, 0.0f, 8.0f);
+glm::vec3 lightPosition(0.0f, 6.0f, 6.0f);
+glm::vec3 camaraPos(0.0f, 0.0f, 20.0f);
 glm::vec3 eyePosition(0.0f, 0.0f, 0.0f);
 float shininess = 2000.0;
 float strength = 0.1;
+float fov = 53.0f;
 
 int viewPosition[3];
 float angleX = 0.0f, angleY = 0.0f;
@@ -193,9 +196,14 @@ static void setUniformFloat(unsigned int program, const std::string &name, const
 
 void renderScene(void) {
 	static object_struct sun = add_obj("sun.obj", "sun.bmp");
+	static object_struct earth = add_obj("earth.obj", "earth.bmp");
 	static object_struct square = add_obj("square.obj", "texture.bmp");
+	static object_struct blue = add_obj("square.obj", "blue.bmp");
 	static int timebase=glutGet(GLUT_ELAPSED_TIME);
 	static unsigned int ticks = 0;
+
+	object_struct& object = isSquare ? (isTextured ? square : blue) : earth;
+
 	if (glutGet(GLUT_ELAPSED_TIME) != timebase && released) {
 		ticks += 1;
 	}
@@ -204,7 +212,7 @@ void renderScene(void) {
     glUseProgram(programs[currentKey]);
 
 	// Vertex
-	glm::mat4 projectionMat = glm::perspective(glm::radians(53.0f), 640.0f/480, 1.0f, 30.f);
+	glm::mat4 projectionMat = glm::perspective(glm::radians(fov), 640.0f/480, 1.0f, 30.f);
 	glm::mat4 camaraMat = glm::lookAt(camaraPos, eyePosition, glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 modelMat = glm::rotate_slow(glm::mat4(1.0f), (float) ticks / 100, glm::vec3(0.0f, 1.0f, 0.0f));
 	setUniformMat4(programs[currentKey], "projMatrix", projectionMat);
@@ -232,16 +240,25 @@ void renderScene(void) {
 	setUniformFloat(programs[currentKey], "Shininess", shininess);
 	setUniformFloat(programs[currentKey], "Strength", strength);
 
-	glBindVertexArray(square.vao);
-	glBindTexture(GL_TEXTURE_2D, square.texture);
-	glDrawElements(GL_TRIANGLES, square.indiceCount, GL_UNSIGNED_INT, nullptr);
+	glBindVertexArray(object.vao);
+	glBindTexture(GL_TEXTURE_2D, object.texture);
+	glDrawElements(GL_TRIANGLES, object.indiceCount, GL_UNSIGNED_INT, nullptr);
 
 	modelMat = glm::scale(modelMat, glm::vec3(0.5f, 0.5f, 0.5f));
-	modelMat = glm::translate(modelMat, glm::vec3(5.0f, 0.0f, 5.0f));
+	modelMat = glm::translate(modelMat, glm::vec3(15.0f, 0.0f, 15.0f));
 	setUniformMat4(programs[currentKey], "modelMatrix", modelMat);
-	glDrawElements(GL_TRIANGLES, square.indiceCount, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, object.indiceCount, GL_UNSIGNED_INT, nullptr);
 
-	glBindVertexArray(0);
+	// Draw sun
+	glBindVertexArray(sun.vao);
+	glBindTexture(GL_TEXTURE_2D, sun.texture);
+	modelMat = glm::translate(glm::mat4(1.0f), lightPosition);
+	glUseProgram(lightSourceProgram);
+	setUniformMat4(lightSourceProgram, "projMatrix", projectionMat);
+	setUniformMat4(lightSourceProgram, "viewMatrix", viewMat);
+	setUniformMat4(lightSourceProgram, "modelMatrix", modelMat);
+	glDrawElements(GL_TRIANGLES, sun.indiceCount, GL_UNSIGNED_INT, nullptr);
+
    	glutSwapBuffers();
 }
  
@@ -335,7 +352,7 @@ void mouseMove(int x, int y)
 //This event occur when you press a mouse button.
 #define WHEEL_UP 3
 #define WHEEL_DOWN 4
-#define WHEEL_STEP 0.2f
+#define WHEEL_STEP 1.0f
 void mouseButton(int button, int state, int x, int y) 
 {
 	startX = x;
@@ -362,9 +379,9 @@ void mouseButton(int button, int state, int x, int y)
 			released = false;
 		}
 	}else if(button == WHEEL_UP){
-		camaraPos.z -= WHEEL_STEP;
+		fov -= WHEEL_STEP;
 	}else if(button == WHEEL_DOWN){
-		camaraPos.z += WHEEL_STEP;
+		fov += WHEEL_STEP;
 	}
 }
 
@@ -378,6 +395,18 @@ void keyboardAction(unsigned char key, int x, int y)
 		case 'P':
 		case 'G':
 			currentKey = key;
+		break;
+		case 's':
+			isSquare = true;
+		break;
+		case 'S':
+			isSquare = false;
+		break;
+		case 'b':
+			isTextured = false;
+		break;
+		case 'B':
+			isTextured = true;
 		break;
 	}
 	printf("Keyboard press %c \n", key);
@@ -415,6 +444,7 @@ int main(int argc, char **argv)
 	// black background
     glClearColor(0.2, 0.2, 0.2, 1.0);
 	programs['a'] = initShaders("vertexA.txt", "fragA.txt");
+	lightSourceProgram = initShaders("vertexA.txt", "fragA.txt");
 	programs['p'] = initShaders("vertexP.txt", "fragP.txt");
 	programs['g'] = initShaders("vertexG.txt", "fragG.txt");
 	programs['A'] = programs['a'];
