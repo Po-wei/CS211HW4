@@ -3,12 +3,12 @@ uniform mat4 viewMatrix, projMatrix;
 
 uniform sampler2D myTextureSampler;
 
-in vec3 Color;
+in vec4 Color;
 
 out vec4 outputF;
  
 void main()
 {
 	// Output
-	outputF = vec4(Color, 1);
+	outputF = Color;
 }
